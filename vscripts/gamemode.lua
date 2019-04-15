@@ -1,9 +1,8 @@
-
 --初始化
-function CubeGameMode:InitGameMode()
+function GameMode:InitGameMode()
     --local  mapName = GetMapName()
-    print("init",mapName);
-
+    print("init", mapName);
+    
     local gamemode = GameRules:GetGameModeEntity()
     self.gamemode = gamemode
     GameRules.gamemode = gamemode
@@ -42,49 +41,48 @@ function CubeGameMode:InitGameMode()
     --完全允许/禁止买活
     gamemode:SetBuybackEnabled(false)
     --设置一个过滤器，用来控制单位受到伤害时的行为 (改变数据表并返回True来使用新值, 返回False来取消事件)
-    gamemode:SetDamageFilter(Dynamic_Wrap(CubeGameMode, "DamageFilter"), self)
+    gamemode:SetDamageFilter(Dynamic_Wrap(GameMode, "DamageFilter"), self)
     --设置一个过滤器，用来控制单位捡起物品时的行为 (改变数据表并返回True来使用新值, 返回False来取消事件)
-    gamemode:SetExecuteOrderFilter(Dynamic_Wrap(CubeGameMode, "OrderFilter"), self)
+    gamemode:SetExecuteOrderFilter(Dynamic_Wrap(GameMode, "OrderFilter"), self)
     --设置一个过滤器，用来控制Modifier的获得, 返回Flase来删除Modifier
-    gamemode:SetModifierGainedFilter(Dynamic_Wrap(CubeGameMode, 'ModifierFilter'), self)
+    gamemode:SetModifierGainedFilter(Dynamic_Wrap(GameMode, 'ModifierFilter'), self)
     --设置一个过滤器，用来控制英雄的金钱被改变时的行为(改变数据表并返回True来使用新值, 返回False来取消事件)
-    gamemode:SetModifyGoldFilter(Dynamic_Wrap(CubeGameMode, "ModifyGoldFilter"), self)
+    gamemode:SetModifyGoldFilter(Dynamic_Wrap(GameMode, "ModifyGoldFilter"), self)
     --设置一个过滤器，用来控制英雄经验值被改变时的行为(改变数据表并返回True来使用新值, 返回False来取消事件)
-    gamemode:SetModifyExperienceFilter(Dynamic_Wrap(CubeGameMode, "ModifyExpFilter"), self)
-    -- body
+    gamemode:SetModifyExperienceFilter(Dynamic_Wrap(GameMode, "ModifyExpFilter"), self)
+-- body
 end
 
 -- 伤害过滤器
-function CubeGameMode:DamageFilter(damageTable)
-    -- damageTable.entindex_attacker_const
-    -- damageTable.entindex_victim_const 
-    -- damageTable.damage
+function GameMode:DamageFilter(damageTable)
+-- damageTable.entindex_attacker_const
+-- damageTable.entindex_victim_const
+-- damageTable.damage
 end
 
 -- 指令过滤器
-function CubeGameMode:OrderFilter(filterTable)
-    -- filterTable.entindex_ability
-
+function GameMode:OrderFilter(filterTable)
+-- filterTable.entindex_ability
 end
 -- buff过滤器
-function CubeGameMode:ModifierFilter(filterTable)
-    -- filterTable.name_const
-    -- filterTable.entindex_ability_const
-    -- filterTable.entindex_caster_const
-    -- filterTable.duration
+function GameMode:ModifierFilter(filterTable)
+-- filterTable.name_const
+-- filterTable.entindex_ability_const
+-- filterTable.entindex_caster_const
+-- filterTable.duration
 end
 
 -- 经验值过滤器
-function CubeGameMode:ModifyExpFilter(filterTable)
-    -- local playerid = filterTable.player_id_const
-    -- local exp = filterTable.experience
-    -- local reason = filterTable.reason_const
+function GameMode:ModifyExpFilter(filterTable)
+-- local playerid = filterTable.player_id_const
+-- local exp = filterTable.experience
+-- local reason = filterTable.reason_const
 end
 
 -- 金币过滤器
-function CubeGameMode:ModifyGoldFilter(filterTable)
-    -- local reason = filterTable.reason_const
-    -- local reliable = filterTable.reliable
-    -- local gold = filterTable.gold
-    -- local payer_id = filterTable.player_id_const
+function GameMode:ModifyGoldFilter(filterTable)
+-- local reason = filterTable.reason_const
+-- local reliable = filterTable.reliable
+-- local gold = filterTable.gold
+-- local payer_id = filterTable.player_id_const
 end

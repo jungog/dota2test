@@ -1,8 +1,8 @@
 -- Sample adventure script
 
 -- Create the class for the game mode, unused in this example as the functions for the quest are global
-if _G.CubeGameMode == nil then
-	_G.CubeGameMode = class({})
+if _G.GameMode == nil then
+	_G.GameMode = class({})
 end
 
 
@@ -17,17 +17,17 @@ function Precache( context )
 	]]
 end
 
-require("CubeGameMode")
+require("GameMode")
 
 
 -- Create the game mode class when we activate
 function Activate()
-	GameRules.CubeGameMode = CubeGameMode()
-	GameRules.CubeGameMode:InitGameMode()
+	GameRules.GameMode = GameMode()
+	GameRules.GameMode:InitGameMode()
 end
 
 -- Begins processing script for the custom game mode.  This "template_example" contains a main OnThink function.
--- function CubeGameMode:InitGameMode()
+-- function GameMode:InitGameMode()
 -- 	print( "Adventure Example loaded." )
 -- end
 
