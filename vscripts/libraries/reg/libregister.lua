@@ -6,6 +6,8 @@
 --用来向ui发送消息
 --Notifications = require('libraries.notifications')
 TimerUtil = require("libraries.TimerUtil")--计时器工具类
+require("libraries.table")--表操作
+MathNumber = require("libraries.math")
 print("the third tool reg")
 --require('libraries.projectiles') --投射物工具类。弹道物品
 --JSON = require("libraries.dkjson")

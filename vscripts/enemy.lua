@@ -1,7 +1,7 @@
 local m = {}
-local RoundEnemy = LoadKeyValues("script/kv/RoundEnemy.kv")
+local RoundEnemy = LoadKeyValues("scripts/kv/RoundEnemy.kv")
 
-
+print("load roundenemy", RoundEnemy);
 
 --野怪在指定位置生成
 --倒计时后野怪是否还有活着的
