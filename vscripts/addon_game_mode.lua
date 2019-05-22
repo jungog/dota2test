@@ -1,7 +1,9 @@
 --第三方lib
 require("libraries.reg.LibRegister")
-RoomMgr = require("roommgr")
-require("enemy")
+--游戏逻辑
+require("gamelogic.reg.gameregister")
+
+
 -- Create the class for the game mode, unused in this example as the functions for the quest are global
 if CubeGame == nil then
     CubeGame = class({})
@@ -108,13 +110,20 @@ function CubeGame:InitGameMode()
     GameRules:SetStrategyTime(0)--设置英雄选择后的决策时间
     GameRules:SetShowcaseTime(0)--设置 天辉vs夜魇 界面的显示时间。
     GameRules:SetSameHeroSelectionEnabled(true)--允许选择重复英雄
-    GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp")
+    
+    GameRules:SetPreGameTime(60)--设置选择英雄与开始游戏之间的时间，给玩家选择固定的自动英雄todo
+    GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp")--自动为玩家选择艾欧todo
     
     ListenToGameEvent("dota_player_pick_hero", Dynamic_Wrap(CubeGame, "OnPlayerPickHero"), self)
     ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(CubeGame, "OnGameRulesStateChange"), self)
     
     RoomMgr.InitRoomData();
-
+    
+    for i = 1, 18 do
+        local pos = RoomMgr.SetEmptyRoomPos(i, nil);
+        
+        Enemy.SpawnEnemyByPos(1, pos);
+    end
 
 -- 自动为玩家选择英雄
 -- 让玩家选自动英雄
@@ -131,7 +140,9 @@ function CubeGame:OnGameRulesStateChange(keys)
     print(" StateChange", newState);
 end
 
+--接收到自动为玩家选择英雄后，弹出选自动英雄画面，让玩家选择，超时后自动为玩家选择三个英雄
 function CubeGame:OnPlayerPickHero(keys)
     print(" PlayerPickHero")
     table.print(keys)
+
 end
