@@ -1,6 +1,8 @@
 local m={}
 
 
+local Team2Playerid = {}
+local Playerid2Team = {}
 
 --玩家可做的操作
 

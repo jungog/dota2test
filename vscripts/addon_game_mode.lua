@@ -118,15 +118,20 @@ function CubeGame:InitGameMode()
     ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(CubeGame, "OnGameRulesStateChange"), self)
     
     RoomMgr.InitRoomData();
-    
-    for i = 1, 18 do
+    local cout = 6;
+    for i = 1, 6 do
         local pos = RoomMgr.SetEmptyRoomPos(i, nil);
         
-        Enemy.SpawnEnemyByPos(1, pos);
+        Enemy.SpawnEnemyByPos(1, cout, pos, nil);
+        cout = cout + 1;
     end
 
+
+
+
+
 -- 自动为玩家选择英雄
--- 让玩家选自动英雄
+-- 让玩家选自动英雄 30s
 -- 选房间10s
 -- 战斗40s
 -- 掉落
@@ -143,6 +148,26 @@ end
 --接收到自动为玩家选择英雄后，弹出选自动英雄画面，让玩家选择，超时后自动为玩家选择三个英雄
 function CubeGame:OnPlayerPickHero(keys)
     print(" PlayerPickHero")
+    --弹出选英雄画面
     table.print(keys)
+    
+    
+    Timers:CreateTimer(20, function()
+        for i = 6, 11 do
+            print("1", Enemy.IsEmenyALive(i));
+        end
+        Enemy.ClearAllEmeny();
+        Timers:CreateTimer(10, function()
+            for i = 6, 11 do
+                print("2", Enemy.IsEmenyALive(i));
+            end
+    end)
+
+
+
+        
+
+    end)
+
 
 end
