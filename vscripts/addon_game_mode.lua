@@ -145,11 +145,30 @@ function CubeGame:OnGameRulesStateChange(keys)
     print(" StateChange", newState);
 end
 
---接收到自动为玩家选择英雄后，弹出选自动英雄画面，让玩家选择，超时后自动为玩家选择三个英雄
+--接收到自动为玩家选择英雄后，等所有人自动选好英雄后，弹出选自动英雄画面，让玩家选择，超时后自动为玩家选择三个英雄
 function CubeGame:OnPlayerPickHero(keys)
     print(" PlayerPickHero")
     --弹出选英雄画面
     table.print(keys)
+    
+    if not IsServer() then return end
+    local player = EntIndexToHScript(keys.player)
+    if (player == nil) then
+        return
+    end
+    
+    local playerId = player:GetPlayerID()
+    local hero = EntIndexToHScript(keys.heroindex)
+    
+    hero:SetForwardVector(Vector(0, 1, 0))
+    hero:SetDeathXP(0)
+    hero:SetHullRadius(1)
+    hero:SetAbilityPoints(0)
+    for i = 1, 16 do
+        hero:RemoveAbility("empty" .. i)
+    end
+    hero:SetMana(0)
+    
     
     
     Timers:CreateTimer(20, function()
@@ -161,12 +180,12 @@ function CubeGame:OnPlayerPickHero(keys)
             for i = 6, 11 do
                 print("2", Enemy.IsEmenyALive(i));
             end
-    end)
-
-
-
-        
-
+        end)
+    
+    
+    
+    
+    
     end)
 
 
