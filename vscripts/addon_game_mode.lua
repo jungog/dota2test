@@ -98,34 +98,61 @@ function CubeGame:InitGameMode()
     GameRules:GetGameModeEntity():SetPauseEnabled(false)
     GameRules:GetGameModeEntity():SetFogOfWarDisabled(true)
     GameRules:GetGameModeEntity():SetBuybackEnabled(false)
+
     GameRules:SetStrategyTime(0)
-    --设置英雄选择后的决策时间
+     --设置英雄选择后的决策时间
     GameRules:SetShowcaseTime(0)
-    --设置 天辉vs夜魇 界面的显示时间。
+     --设置 天辉vs夜魇 界面的显示时间。
     GameRules:SetSameHeroSelectionEnabled(true)
-    --允许选择重复英雄
+     --允许选择重复英雄
 
     GameRules:SetPreGameTime(60)
-    --设置选择英雄与开始游戏之间的时间，给玩家选择固定的自动英雄todo
+     --设置选择英雄与开始游戏之间的时间，给玩家选择固定的自动英雄todo
     GameRules:GetGameModeEntity():SetCustomGameForceHero('npc_dota_hero_wisp')
-    --自动为玩家选择艾欧todo
+     --自动为玩家选择艾欧todo
 
     ListenToGameEvent('dota_player_pick_hero', Dynamic_Wrap(CubeGame, 'OnPlayerPickHero'), self)
     ListenToGameEvent('game_rules_state_change', Dynamic_Wrap(CubeGame, 'OnGameRulesStateChange'), self)
-
     --注册UI监听
     self:RegisterUIEventListeners()
 
     RoomMgr.InitRoomData()
-    local cout = 6
-    for i = 1, 6 do
-        local pos = RoomMgr.SetEmptyRoomPos(i, nil)
 
-        Enemy.SpawnEnemyByPos(1, cout, pos, nil)
-        cout = cout + 1
+    if GameRules.Cube == nil then
+        GameRules.Cube = {}
+        GameRules.Cube.GameId = ''
+        GameRules.Cube.MaxNormalRound = 12
+        GameRules.Cube.RoundNo = 0
+        GameRules.Cube.PlayerList = {}
+        GameRules.Cube.Playerid2Teamid = {}
+        GameRules.Cube.Teamid2Playerid = {}
+        for playerid = 0, 7 do
+            local playerInfo = {}
+            playerInfo.SteamId = ''
+            playerInfo.SteamAccountId = ''
+            playerInfo.PlayerName = ''
+            playerInfo.TeamId = 0
+            playerInfo.HP = 100
+            playerInfo.IsAlive = true
+            playerInfo.IsBot = false
+
+            playerInfo.Heros = {
+                [1] = {Vec = Vector(10, 0, 0), Name = ''},
+                [2] = {Vec = Vector(0, 0, 0), Name = ''},
+                [3] = {Vec = Vector(-10, 0, 0), Name = ''}
+            }
+            -- todo背包和掉落栏
+            GameRules.DW.PlayerList[playerid] = playerInfo
+        end
     end
 
-    -- 自动为玩家选择英雄
+    -- local cout = 6;
+    -- for i = 1, 6 do
+    --     local pos = RoomMgr.SetEmptyRoomPos(i, nil);
+    --     Enemy.SpawnEnemyByPos(1, cout, pos, nil);
+    --     cout = cout + 1;
+    -- end
+    -- 自动为玩家选择英雄 30s
     -- 让玩家选自动英雄 30s
     -- 选房间10s
     -- 战斗40s
@@ -165,21 +192,45 @@ function CubeGame:OnPlayerPickHero(keys)
     end
     hero:SetMana(0)
 
-    -- Timers:CreateTimer(
-    --     20,
-    --     function()
-    --         for i = 6, 11 do
-    --             print('1', Enemy.IsEmenyALive(i))
-    --         end
-    --         Enemy.ClearAllEmeny()
-    --         Timers:CreateTimer(
-    --             10,
-    --             function()
-    --                 for i = 6, 11 do
-    --                     print('2', Enemy.IsEmenyALive(i))
-    --                 end
-    --             end
-    --         )
+    GameRules.Cube.Playerid2Teamid[player:GetPlayerID()] = hero:GetTeam()
+    GameRules.Cube.Teamid2Playerid[hero:GetTeam()] = player:GetPlayerID()
+
+    local playercount = 0
+    for _, _ in pairs(GameRules.Cube.Teamid2Playerid) do
+        playercount = playercount + 1
+    end
+
+    print('PlayerCount: ' .. playercount .. '/' .. PlayerResource:GetPlayerCount())
+
+    if playercount == PlayerResource:GetPlayerCount() then
+        Timers:CreateTimer(
+            0.1,
+            function()
+                InitHeros()
+            end
+        )
+    -- Timers:CreateTimer(20, function()
+    --     for i = 6, 11 do
+    --         print("1", Enemy.IsEmenyALive(i));
     --     end
-    -- )
+    --     Enemy.ClearAllEmeny();
+    --     Timers:CreateTimer(10, function()
+    --         for i = 6, 11 do
+    --             print("2", Enemy.IsEmenyALive(i));
+    --         end
+    --     end)
+    -- end)
+    end
+end
+
+function InitHeros()
+    -- todo像客户端发送英雄列表，等待玩家选择英雄
+    Timers:CreateTimer(
+        30,
+        function()
+            -- 30秒后检查玩家是否选好，没选好就自动帮玩家选，然后进入1选房间环节
+            for i, Val in pairs(GameRules.Cube.PlayerList) do
+            end
+        end
+    )
 end
