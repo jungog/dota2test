@@ -118,19 +118,43 @@ function CubeGame:InitGameMode()
     ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(CubeGame, "OnGameRulesStateChange"), self)
     
     RoomMgr.InitRoomData();
-    local cout = 6;
-    for i = 1, 6 do
-        local pos = RoomMgr.SetEmptyRoomPos(i, nil);
+    
+    if GameRules.Cube == nil then
         
-        Enemy.SpawnEnemyByPos(1, cout, pos, nil);
-        cout = cout + 1;
+        GameRules.Cube = {}
+        GameRules.Cube.GameId = ""
+        GameRules.Cube.MaxNormalRound = 12
+        GameRules.Cube.RoundNo = 0;
+        GameRules.Cube.PlayerList = {}
+        GameRules.Cube.Playerid2Teamid = {}
+        GameRules.Cube.Teamid2Playerid = {}
+        for playerid = 0, 7 do
+            local playerInfo = {}
+            playerInfo.SteamId = ""
+            playerInfo.SteamAccountId = ""
+            playerInfo.PlayerName = ""
+            playerInfo.TeamId = 0
+            playerInfo.HP = 100
+            playerInfo.IsAlive = true
+            playerInfo.IsBot = false
+            
+            playerInfo.Heros = {
+                [1] = {Vec = Vector(10, 0, 0), Name = ""},
+                [2] = {Vec = Vector(0, 0, 0), Name = ""},
+                [3] = {Vec = Vector(-10, 0, 0), Name = ""},
+            }
+            -- todo背包和掉落栏
+            GameRules.DW.PlayerList[playerid] = playerInfo
+        end
     end
 
-
-
-
-
--- 自动为玩家选择英雄
+-- local cout = 6;
+-- for i = 1, 6 do
+--     local pos = RoomMgr.SetEmptyRoomPos(i, nil);
+--     Enemy.SpawnEnemyByPos(1, cout, pos, nil);
+--     cout = cout + 1;
+-- end
+-- 自动为玩家选择英雄 30s
 -- 让玩家选自动英雄 30s
 -- 选房间10s
 -- 战斗40s
@@ -170,23 +194,43 @@ function CubeGame:OnPlayerPickHero(keys)
     hero:SetMana(0)
     
     
+    GameRules.Cube.Playerid2Teamid[player:GetPlayerID()] = hero:GetTeam()
+    GameRules.Cube.Teamid2Playerid[hero:GetTeam()] = player:GetPlayerID()
     
-    Timers:CreateTimer(20, function()
-        for i = 6, 11 do
-            print("1", Enemy.IsEmenyALive(i));
-        end
-        Enemy.ClearAllEmeny();
-        Timers:CreateTimer(10, function()
-            for i = 6, 11 do
-                print("2", Enemy.IsEmenyALive(i));
-            end
+    local playercount = 0
+    for _, _ in pairs(GameRules.Cube.Teamid2Playerid) do
+        playercount = playercount + 1
+    end
+    
+    print("PlayerCount: " .. playercount .. "/" .. PlayerResource:GetPlayerCount())
+    
+    if playercount == PlayerResource:GetPlayerCount() then
+        Timers:CreateTimer(0.1, function()
+            InitHeros()
         end)
-    
-    
-    
-    
-    
-    end)
-
-
+    -- Timers:CreateTimer(20, function()
+    --     for i = 6, 11 do
+    --         print("1", Enemy.IsEmenyALive(i));
+    --     end
+    --     Enemy.ClearAllEmeny();
+    --     Timers:CreateTimer(10, function()
+    --         for i = 6, 11 do
+    --             print("2", Enemy.IsEmenyALive(i));
+    --         end
+    --     end)
+    -- end)
+    end
 end
+
+function InitHeros()
+
+-- todo像客户端发送英雄列表，等待玩家选择英雄
+    Timers:CreateTimer(30, function()
+
+-- 30秒后检查玩家是否选好，没选好就自动帮玩家选，然后进入1选房间环节
+for i ,Val in pairs(GameRules.Cube.PlayerList) do
+end
+    end)
+end
+
+
