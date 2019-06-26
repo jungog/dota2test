@@ -73,9 +73,45 @@ function m.SetEmptyRoomPos(id, t)
         for _, v in pairs(ta) do
             
             if not Room[TypeNum[t][v]].IsFull then
-                print("value", v, TypeNum[t][v]);
+                -- print("value", v, TypeNum[t][v]);
                 return m.SetRoomId(Room[TypeNum[t][v]], id);
             end
+        end
+    end
+end
+
+function m.GetRoomTypeByPlayerId(id)
+
+    for i = 1, MAX_ROOM_NUM do
+        if Room[i].AID == id then
+            return Room[i].Type;
+        end
+        if Room[i].BID == id then
+            return Room[i].Type;
+        end
+    end
+end
+
+function m.GetSelfByPlayerId(id)
+
+    for i = 1, MAX_ROOM_NUM do
+        if Room[i].AID == id then
+            return Room[i].APos;
+        end
+        if Room[i].BID == id then
+            return Room[i].BPos;
+        end
+    end
+end
+
+function m.GetEnemyByPlayerId(id)
+
+    for i = 1, MAX_ROOM_NUM do
+        if Room[i].AID == id then
+            return Room[i].BPos;
+        end
+        if Room[i].BID == id then
+            return Room[i].APos;
         end
     end
 end

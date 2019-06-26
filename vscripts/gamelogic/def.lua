@@ -19,3 +19,6 @@ AllHeroNames = {
     "techies", "oracle", "winter_wyvern", "arc_warden", "abyssal_underlord",
     "grimstroke", "mars", "undying", "invoker", "clinkz"
 }
+
+SelectHeroTime = 2--30
+SelectRoomTime = 2--10
