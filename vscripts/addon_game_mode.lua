@@ -100,19 +100,20 @@ function CubeGame:InitGameMode()
     GameRules:GetGameModeEntity():SetBuybackEnabled(false)
 
     GameRules:SetStrategyTime(0)
-     --设置英雄选择后的决策时间
+    --设置英雄选择后的决策时间
     GameRules:SetShowcaseTime(0)
-     --设置 天辉vs夜魇 界面的显示时间。
+    --设置 天辉vs夜魇 界面的显示时间。
     GameRules:SetSameHeroSelectionEnabled(true)
-     --允许选择重复英雄
+    --允许选择重复英雄
 
     GameRules:SetPreGameTime(60)
-     --设置选择英雄与开始游戏之间的时间，给玩家选择固定的自动英雄todo
+    --设置选择英雄与开始游戏之间的时间，给玩家选择固定的自动英雄todo
     GameRules:GetGameModeEntity():SetCustomGameForceHero('npc_dota_hero_wisp')
-     --自动为玩家选择艾欧todo
-
-    ListenToGameEvent('dota_player_pick_hero', Dynamic_Wrap(CubeGame, 'OnPlayerPickHero'), self)
+    --自动为玩家选择艾欧todo
+    ListenToGameEvent('player_connect_full', Dynamic_Wrap(DDW, 'OnConnectFull'), self)
+    ListenToGameEvent('player_disconnect', Dynamic_Wrap(DDW, 'OnDisconnect'), self)
     ListenToGameEvent('game_rules_state_change', Dynamic_Wrap(CubeGame, 'OnGameRulesStateChange'), self)
+    ListenToGameEvent('dota_player_pick_hero', Dynamic_Wrap(CubeGame, 'OnPlayerPickHero'), self)
     --注册UI监听
     self:RegisterUIEventListeners()
 
@@ -135,12 +136,16 @@ function CubeGame:InitGameMode()
             playerInfo.HP = 100
             playerInfo.IsAlive = true
             playerInfo.IsBot = false
+            playerInfo.IsEmpty = true
+            playerInfo.IsOnline = false
+            playerInfo.RoomType = ''
 
             playerInfo.Heros = {
                 [1] = {Vec = Vector(10, 0, 0), Name = ''},
                 [2] = {Vec = Vector(0, 0, 0), Name = ''},
                 [3] = {Vec = Vector(-10, 0, 0), Name = ''}
             }
+            playerInfo.Abilitys = {}
             -- todo背包和掉落栏
             GameRules.DW.PlayerList[playerid] = playerInfo
         end
@@ -159,7 +164,25 @@ function CubeGame:InitGameMode()
     -- 掉落
     -- 休整20s
 end
+function CubeGame:OnConnectFull(keys)
+    local playerId = keys.playerId
+    if GameRules.CubeGame.PlayerList[playerId] ~= nil then
+        GameRules.CubeGame.PlayerList[playerId].SteamId = tostring(PlayerResource:GetSteamID(playerId))
+        GameRules.CubeGame.PlayerList[playerId].SteamAccountId = tostring(PlayerResource:GetSteamAccountID(playerId))
+        GameRules.CubeGame.PlayerList[playerId].PlayerName = tostring(PlayerResource:GetPlayerName(playerId))
+        GameRules.CubeGame.PlayerList[playerId].IsOnline = true
+        GameRules.CubeGame.PlayerList[playerId].IsBot = false
+        GameRules.CubeGame.PlayerList[playerId].IsEmpty = false
 
+    -- todo 是否要包括玩家选的英雄&技能呢
+    end
+end
+function CubeGame:OnDisconnect(keys)
+    local playerId = keys.PlayerID
+    if (playerId >= 0 and GameRules.CubeGame.PlayerList[playerId] ~= nil) then
+        GameRules.CubeGame.PlayerList[playerId].IsOnline = false
+    end
+end
 function CubeGame:OnGameRulesStateChange(keys)
     -- print(" GameRules State Changed")
     local newState = GameRules:State_Get()
@@ -224,13 +247,43 @@ function CubeGame:OnPlayerPickHero(keys)
 end
 
 function InitHeros()
-    -- todo像客户端发送英雄列表，等待玩家选择英雄
+    -- todo向客户端发送英雄列表，等待玩家选择英雄
     Timers:CreateTimer(
         30,
         function()
             -- 30秒后检查玩家是否选好，没选好就自动帮玩家选，然后进入1选房间环节
-            for i, Val in pairs(GameRules.Cube.PlayerList) do
+            for _, Val in pairs(GameRules.Cube.PlayerList) do
+                if not Val.IsEmpty then
+                    for _, hero in pairs((Val.Heros)) do
+                        if hero.name == '' then
+                            hero.name = table.random(AllHeroNames)
+                        end
+                    end
+                end
             end
+
+            SelectRoom()
+        end
+    )
+end
+
+-- 游戏环节1 选择房间
+function SelectRoom()
+    -- 清空玩家上一次选择的房间类型
+    --向客户端展示选房间画面，等待玩家选房间
+    Timers:CreateTimer(
+        10,
+        function()
+            -- 30秒后检查玩家是否选好，没选好就自动帮玩家选，然后进入1选房间环节
+            for _, Val in pairs(GameRules.Cube.PlayerList) do
+                if not Val.IsEmpty then
+                    if hero.RoomType == '' then
+                        hero.RoomType =RoomMgr.
+                    end
+                end
+            end
+
+            Start()
         end
     )
 end
