@@ -1,5 +1,3 @@
-
-
 HeroNamePrefix = "npc_dota_hero_"
 
 AllHeroNames = {
@@ -20,5 +18,7 @@ AllHeroNames = {
     "grimstroke", "mars", "undying", "invoker", "clinkz"
 }
 
-SelectHeroTime = 2--30
-SelectRoomTime = 2--10
+SelectHeroTime = 2 --30
+SelectRoomTime = 2 --10
+PrepareTime = 2
+BattleTime = 10

@@ -3,7 +3,6 @@ require('libraries.reg.LibRegister')
 --游戏逻辑
 require('gamelogic.reg.gameregister')
 
-
 -- Create the class for the game mode, unused in this example as the functions for the quest are global
 if CubeGame == nil then
     CubeGame = class({})
@@ -142,9 +141,9 @@ function CubeGame:InitGameMode()
             playerInfo.RoomType = ''
             
             playerInfo.Heros = {
-                [1] = {Vec = Vector(10, 0, 0), Name = ''},
+                [1] = {Vec = Vector(80, 0, 0), Name = ''},
                 [2] = {Vec = Vector(0, 0, 0), Name = ''},
-                [3] = {Vec = Vector(-10, 0, 0), Name = ''}
+                [3] = {Vec = Vector(-80, 0, 0), Name = ''}
             }
             playerInfo.Abilitys = {}
             -- todo背包和掉落栏
@@ -265,7 +264,7 @@ function InitHeros()
                             -- print(' hero.name nil')
                             hero.Name = table.random(AllHeroNames)
                         end
-                        -- print(' hero.name', hero.Name)
+                    -- print(' hero.name', hero.Name)
                     end
                 end
             end
@@ -284,6 +283,11 @@ function SelectRoom()
             Val.RoomType = nil
         end
     end
+    -- 游戏参数变更
+    GameRules.CubeGame.RoundNo = GameRules.CubeGame.RoundNo + 1
+    if GameRules.CubeGame.RoundNo > GameRules.CubeGame.MaxNormalRound then
+        -- todo 超过MaxNormalRound进入死亡模式
+        end
     --todo 向客户端展示选房间画面，等待玩家选房间
     Timers:CreateTimer(
         SelectRoomTime,
@@ -292,13 +296,13 @@ function SelectRoom()
             for i, Val in pairs(GameRules.CubeGame.PlayerList) do
                 if not Val.IsEmpty then
                     if Val.RoomType == nil then
-                        RoomMgr.SetEmptyRoomPos(i, nil);
+                        RoomMgr.SetEmptyRoomPos(i, nil)
                     else
-                        RoomMgr.SetEmptyRoomPos(i, Val.RoomType);
+                        RoomMgr.SetEmptyRoomPos(i, Val.RoomType)
                     end
-                    Val.RoomType = RoomMgr.GetRoomTypeByPlayerId(i);
+                    Val.RoomType = RoomMgr.GetRoomTypeByPlayerId(i)
                 end
-                -- print(' Val.RoomType', Val.RoomType)
+            -- print(' Val.RoomType', Val.RoomType)
             end
             Prepare()
         end
@@ -312,21 +316,55 @@ function Prepare()
     for playerId, playerInfo in pairs(GameRules.CubeGame.PlayerList) do
         if not playerInfo.IsEmpty then
             -- table.print(playerInfo)
-            local pos = RoomMgr.GetSelfByPlayerId(playerId)
+            local pos = RoomMgr.GetSelfPosByPlayerId(playerId)
+            local targetpos = RoomMgr.GetEnemyPosById(playerId)
             local heros = playerInfo.Heros
-            
+            local teamid = playerInfo.TeamId
             for i = 1, 3 do
                 -- table.print(heros[i])
-                local herounit = CreateUnitByName(HeroNamePrefix .. heros[i].Name, pos + heros[i].Vec, true, nil, nil, playerInfo.TeamId)
+                local herounit =
+                    CreateUnitByName(
+                        HeroNamePrefix .. heros[i].Name,
+                        pos + heros[i].Vec,
+                        true,
+                        nil,
+                        nil,
+                        playerInfo.TeamId
+                )
                 -- print('create info', HeroNamePrefix .. heros[i].Name, pos + heros[i].Vec)
                 -- print('create', herounit)
                 -- table.print(herounit)
                 herounit:SetControllableByPlayer(playerId, true)
                 herounit:SetHealth(herounit:GetMaxHealth())
                 herounit:SetMana(herounit:GetMaxMana())
-                -- print('Prepare', herounit)
+                herounit:SetForwardVector(targetpos)
+                herounit:SetTeam(teamid)
+            -- print('Prepare', herounit)
             end
         end
     end
--- 生成pve怪
+    -- 生成pve怪
+    for _, playerInfo in pairs(GameRules.CubeGame.PlayerList) do
+        if not playerInfo.IsEmpty then
+            RoomMgr.LoadEnemyInSingleRoom(GameRules.CubeGame.RoundNo, playerInfo.TeamId)
+        end
+    end
+    
+    -- 3秒后开战
+    Timers:CreateTimer(
+        PrepareTime,
+        function()
+            Battle()
+        end
+)
+end
+
+-- 游戏环节3 开战
+function Battle()
+    Timers:CreateTimer(
+        BattleTime,
+        function()
+        --    战斗时间结束，来检查胜负，发放奖励，清理战场
+        end
+)
 end
