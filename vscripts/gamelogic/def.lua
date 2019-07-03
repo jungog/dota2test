@@ -22,3 +22,6 @@ SelectHeroTime = 2 --30
 SelectRoomTime = 2 --10
 PrepareTime = 2
 BattleTime = 10
+
+AllTeamIdx = {DOTA_TEAM_CUSTOM_1, DOTA_TEAM_CUSTOM_2, DOTA_TEAM_CUSTOM_3, DOTA_TEAM_CUSTOM_4,
+    DOTA_TEAM_CUSTOM_5, DOTA_TEAM_CUSTOM_6}
