@@ -49,7 +49,6 @@ function CubeGame:AddBot(keys)
                     GameRules.DW.PlayerList[botPlayerId].IsBot = true
                     -- GameRules.DW.PlayerList[botPlayerId].MaxSupply = GameRules.DW.GetMaxSupply(botPlayerId)
                     -- GameRules.DW.PlayerList[botPlayerId].CurrentSupply = GameRules.DW.GetCurrentSupply(botPlayerId)
-                    
                     -- ShowPlayerMessage(GameRules.DW.PlayerList[botPlayerId].PlayerName .. " HAS JOINED THE GAME", player)
                     break
                 end
