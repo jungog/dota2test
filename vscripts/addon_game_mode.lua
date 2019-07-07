@@ -150,19 +150,20 @@ function CubeGame:InitGameMode()
             GameRules.CubeGame.PlayerList[playerid] = playerInfo
         end
     end
-
--- local cout = 6;
--- for i = 1, 6 do
---     local pos = RoomMgr.SetEmptyRoomPos(i, nil);
---     Enemy.SpawnEnemyByPos(1, cout, pos, nil);
---     cout = cout + 1;
--- end
--- 自动为玩家选择英雄 30s
--- 让玩家选自动英雄 30s
--- 选房间10s
--- 战斗40s
--- 掉落
--- 休整20s
+    
+    -- local cout = 6;
+    -- for i = 1, 6 do
+    --     local pos = RoomMgr.SetEmptyRoomPos(i, nil);
+    --     Enemy.SpawnEnemyByPos(1, cout, pos, nil);
+    --     cout = cout + 1;
+    -- end
+    -- 自动为玩家选择英雄 30s
+    -- 让玩家选自动英雄 30s
+    -- 选房间10s
+    -- 战斗40s
+    -- 掉落
+    -- 休整20s
+    SendToServerConsole("dota_max_physical_items_purchase_limit 9999")
 end
 function CubeGame:OnConnectFull(keys)
     local playerId = keys.PlayerID
@@ -339,7 +340,7 @@ function Prepare()
                 herounit:SetMana(herounit:GetMaxMana())
                 herounit:SetForwardVector(targetpos)
                 herounit:SetTeam(teamid)
-            -- print('Prepare', herounit)
+                print('Prepare', herounit)
             end
         end
     end
@@ -361,6 +362,7 @@ end
 
 -- 游戏环节3 开战
 function Battle()
+    print('Battle')
     Timers:CreateTimer(
         BattleTime,
         function()

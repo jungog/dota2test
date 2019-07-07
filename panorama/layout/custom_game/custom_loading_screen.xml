@@ -9,5 +9,21 @@
     <Panel>
          <!-- loading的图片 png,psd都是可以的 -->
         <Image id="ix" class="imageSize" src="file://{images}/custom_game/loading.png"/>
+        <Panel class="setting_box" id="setting_box">
+        	<Panel class="inner_box">
+	        	<Panel class="setting_header">
+	        		<Label text="#UI_BOT_SETTING"></Label>
+	        	</Panel>
+	        	<Panel class="hr_bar" />
+	        	<Panel class="setting_text">
+	        		<Label text="#UI_CURRENT_BOT_COUNT"></Label>
+	        		<Label text=".." id="lblBotCount"></Label>
+	        	</Panel>
+	        	<Button id="btn_add_bot" onactivate="add_bot_click();">
+	        		<Label text="#UI_BOT_ADD"></Label>
+	        	</Button>
+	        	<Label id="lblTips" text="#UI_BOT_TIPS" />
+        	</Panel>
+    	</Panel>
     </Panel>
 </root>
