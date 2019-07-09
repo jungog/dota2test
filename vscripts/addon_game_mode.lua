@@ -363,10 +363,13 @@ end
 -- 游戏环节3 开战
 function Battle()
     print('Battle')
+    
+    -- 让英雄移动，相遇，战斗
     Timers:CreateTimer(
         BattleTime,
         function()
         --    战斗时间结束，来检查胜负，发放奖励，清理战场
+        
         end
 )
 end
