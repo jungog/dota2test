@@ -18,8 +18,8 @@ function m.InitRoomData()
     for i = 1, MAX_ROOM_NUM do
         Room[i].IsFull = false
         Room[i].Type = RoomData[tostring(i)]['Type']
-        Room[i].AID = 0
-        Room[i].BID = 0
+        Room[i].AID = -1
+        Room[i].BID = -1
         Room[i].APos = Vector(RoomData[tostring(i)]['A_X'], RoomData[tostring(i)]['A_Y'], RoomData[tostring(i)]['A_Z'])
         Room[i].BPos = Vector(RoomData[tostring(i)]['B_X'], RoomData[tostring(i)]['B_Y'], RoomData[tostring(i)]['B_Z'])
     -- print("room", i, Room[i].IsFull, Room[i].AID, Room[i].APos);
@@ -29,8 +29,8 @@ end
 function m.ClearAllRoomData()
     for i = 1, MAX_ROOM_NUM do
         Room[i].IsFull = false
-        Room[i].AID = 0
-        Room[i].BID = 0
+        Room[i].AID = -1
+        Room[i].BID = -1
     end
 end
 
@@ -113,9 +113,9 @@ end
 function m.LoadEnemyInSingleRoom(round, teamid)
     for i = 1, MAX_ROOM_NUM do
         if Room[i].IsFull == false then
-            if Room[i].AID ~= 0 then
+            if Room[i].AID ~= -1 then
                 Enemy.SpawnEnemyByPos(round, teamid, Room[i].BPos, Room[i].APos)
-            elseif Room[i].BID ~= 0 then
+            elseif Room[i].BID ~= -1 then
                 Enemy.SpawnEnemyByPos(round, teamid, Room[i].APos, Room[i].BPos)
             end
             Room[i].IsFull = true
@@ -125,7 +125,7 @@ end
 
 --内部函数--
 function m.SetRoomId(room, id)
-    if room.AID == 0 then
+    if room.AID == -1 then
         room.AID = id
         print('playerid:', id,"in a")
         return room.APos
