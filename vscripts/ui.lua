@@ -25,32 +25,21 @@ function CubeGame:AddBot(keys)
     table.print(keys);
     local hostPlayerId = keys.PlayerID
     if GameRules:PlayerHasCustomGameHostPrivileges(PlayerResource:GetPlayer(hostPlayerId)) then
+        GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_GOODGUYS, 1)
+        GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_BADGUYS, 1)
         local playerCount = PlayerResource:GetPlayerCount()
-        if (playerCount >= 8) then
+        if (playerCount >= 6) then
             return
         end
         local botPlayerId = playerCount
         
-        local addSuccess = Tutorial:AddBot("npc_dota_hero_wisp", "", "", false)
+        local addSuccess = Tutorial:AddBot("", "", "", false)
         
         if (addSuccess ~= true) then
             return
         end
-        print("re addbot botPlayerId", botPlayerId)
-        local player = PlayerResource:GetPlayer(botPlayerId)
-        print("player ~= nil ", player)
-        
-        for i = 0, 10 do
-            local player = PlayerResource:GetPlayer(i)
-            print("what", i, player)
-            if player ~= nil then
-                table.print(player)
-                print("name ", tostring(PlayerResource:GetPlayerName(i)));
-            end
-        end
-        
-        
-        
+
+        local player = PlayerResource:GetPlayer(botPlayerId)     
         if player ~= nil then
             print("player ~= nil ")
             for i = 1, #AllTeamIdx do
@@ -69,5 +58,7 @@ function CubeGame:AddBot(keys)
                 end
             end
         end
+        GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_GOODGUYS, 0)
+        GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_BADGUYS, 0)
     end
 end

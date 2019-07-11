@@ -14,7 +14,7 @@ local Room = {
 
 function m.InitRoomData()
     local RoomData = LoadKeyValues('scripts/kv/RoomData.kv')
-
+    
     for i = 1, MAX_ROOM_NUM do
         Room[i].IsFull = false
         Room[i].Type = RoomData[tostring(i)]['Type']
@@ -22,7 +22,7 @@ function m.InitRoomData()
         Room[i].BID = 0
         Room[i].APos = Vector(RoomData[tostring(i)]['A_X'], RoomData[tostring(i)]['A_Y'], RoomData[tostring(i)]['A_Z'])
         Room[i].BPos = Vector(RoomData[tostring(i)]['B_X'], RoomData[tostring(i)]['B_Y'], RoomData[tostring(i)]['B_Z'])
-        -- print("room", i, Room[i].IsFull, Room[i].AID, Room[i].APos);
+    -- print("room", i, Room[i].IsFull, Room[i].AID, Room[i].APos);
     end
 end
 
@@ -59,7 +59,10 @@ local TypeNum = {
 --id:玩家id,t:玩家选择的房间类型，nil为全随机，ret为地图所在位置
 function m.SetEmptyRoomPos(id, t)
     if t == nil then
+        
         local ta = MathNumber.GetRandomNumList(MAX_ROOM_NUM)
+        print("t==nil")
+        table.print(ta);
         for _, v in pairs(ta) do
             if not Room[v].IsFull then
                 return m.SetRoomId(Room[v], id)
@@ -124,12 +127,12 @@ end
 function m.SetRoomId(room, id)
     if room.AID == 0 then
         room.AID = id
-        print('a in ', id)
+        print('playerid:', id,"in a")
         return room.APos
     else
         room.BID = id
         room.IsFull = true
-        print('b in ', id)
+        print('playerid:', id,"in b")
         return room.BPos
     end
 end

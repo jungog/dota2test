@@ -293,6 +293,7 @@ function SelectRoom()
     Timers:CreateTimer(
         SelectRoomTime,
         function()
+            print("player2teamid ", GameRules.CubeGame.Playerid2Teamid);
             -- 10秒后检查玩家是否选好，没选好就自动帮玩家选房间,然后2准备环节
             for i, Val in pairs(GameRules.CubeGame.PlayerList) do
                 if not Val.IsEmpty then
@@ -302,6 +303,7 @@ function SelectRoom()
                         RoomMgr.SetEmptyRoomPos(i, Val.RoomType)
                     end
                     Val.RoomType = RoomMgr.GetRoomTypeByPlayerId(i)
+                    print("playerid:", i, ",roomtype:", Val.RoomType)
                 end
             -- print(' Val.RoomType', Val.RoomType)
             end
