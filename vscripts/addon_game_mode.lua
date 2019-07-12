@@ -127,6 +127,7 @@ function CubeGame:InitGameMode()
         GameRules.CubeGame.PlayerList = {}
         GameRules.CubeGame.Playerid2Teamid = {}
         GameRules.CubeGame.Teamid2Playerid = {}
+        GameRules.CubeGame.Playerid2Hero = {}
         for playerid = 0, 7 do
             local playerInfo = {}
             playerInfo.SteamId = ''
@@ -141,9 +142,9 @@ function CubeGame:InitGameMode()
             playerInfo.RoomType = ''
             
             playerInfo.Heros = {
-                [1] = {Vec = Vector(80, 0, 0), Name = ''},
-                [2] = {Vec = Vector(0, 0, 0), Name = ''},
-                [3] = {Vec = Vector(-80, 0, 0), Name = ''}
+                [1] = {Vec = Vector(80, 0, 0), Name = '', unit = {}},
+                [2] = {Vec = Vector(0, 0, 0), Name = '', unit = {}},
+                [3] = {Vec = Vector(-80, 0, 0), Name = '', unit = {}}
             }
             playerInfo.Abilitys = {}
             -- todo背包和掉落栏
@@ -216,6 +217,7 @@ function CubeGame:OnPlayerPickHero(keys)
     
     GameRules.CubeGame.Playerid2Teamid[player:GetPlayerID()] = hero:GetTeam()
     GameRules.CubeGame.Teamid2Playerid[hero:GetTeam()] = player:GetPlayerID()
+    GameRules.CubeGame.Playerid2Hero[player:GetPlayerID()] = hero
     
     GameRules.CubeGame.PlayerList[playerId].TeamId = hero:GetTeam()
     
@@ -297,9 +299,9 @@ function SelectRoom()
             for i, Val in pairs(GameRules.CubeGame.PlayerList) do
                 if not Val.IsEmpty then
                     if Val.RoomType == nil then
-                        RoomMgr.SetEmptyRoomPos(i, nil)
+                        RoomMgr.SetEmptyRoomPosByPlayerId(i, nil)
                     else
-                        RoomMgr.SetEmptyRoomPos(i, Val.RoomType)
+                        RoomMgr.SetEmptyRoomPosByPlayerId(i, Val.RoomType)
                     end
                     Val.RoomType = RoomMgr.GetRoomTypeByPlayerId(i)
                 end
@@ -318,9 +320,13 @@ function Prepare()
         if not playerInfo.IsEmpty then
             -- table.print(playerInfo)
             local pos = RoomMgr.GetSelfPosByPlayerId(playerId)
-            local targetpos = RoomMgr.GetEnemyPosById(playerId)
+            local targetpos = RoomMgr.GetEnemyPosByPlayerId(playerId)
             local heros = playerInfo.Heros
             local teamid = playerInfo.TeamId
+            -- 挪动玩家
+            local hero = GameRules.CubeGame.Playerid2Hero[playerId]
+            hero:MoveToPosition(pos)
+            -- 挪动玩家的英雄
             for i = 1, 3 do
                 -- table.print(heros[i])
                 local herounit =
@@ -340,6 +346,7 @@ function Prepare()
                 herounit:SetMana(herounit:GetMaxMana())
                 herounit:SetForwardVector(targetpos)
                 herounit:SetTeam(teamid)
+                heros[i].unit = herounit
                 print('Prepare', herounit)
             end
         end
@@ -365,11 +372,11 @@ function Battle()
     print('Battle')
     
     -- 让英雄移动，相遇，战斗
+    RoomMgr.MoveAllHeros()
     Timers:CreateTimer(
         BattleTime,
         function()
         --    战斗时间结束，来检查胜负，发放奖励，清理战场
-        
         end
 )
 end
