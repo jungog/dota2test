@@ -16,19 +16,20 @@ print('load roundenemy', RoundEnemy)
 function m.SpawnEnemyByPos(round, teamid, pos, forwardpos)
     for i, v in pairs(RoundEnemy['Round' .. tostring(round)]) do
         print('spawn enemy', i, v['Unit'], pos)
-
+        
         local enemy =
             CreateUnitByName(
-            v['Unit'],
-            Vector(pos.x + v['X'], pos.y + v['Y'], pos.z),
-            true,
-            nil,
-            nil,
-            DOTA_TEAM_NEUTRALS
+                v['Unit'],
+                Vector(pos.x + v['X'], pos.y + v['Y'], pos.z),
+                true,
+                nil,
+                nil,
+                DOTA_TEAM_NEUTRALS
         )
         table.insert(EnemyList[teamid], enemy)
         enemy.SetForwardVector(forwardpos)
     end
+    return EnemyList[teamid]
 end
 --野怪是否还有活着的
 function m.IsEmenyALive(teamid)
@@ -50,7 +51,7 @@ function m.ClearAllEmeny()
                     function()
                         v:Destroy()
                     end
-                )
+            )
             end
         end
     end
