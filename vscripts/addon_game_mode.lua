@@ -293,17 +293,17 @@ function SelectRoom()
     Timers:CreateTimer(
         SelectRoomTime,
         function()
-            print("player2teamid ", GameRules.CubeGame.Playerid2Teamid);
             -- 10秒后检查玩家是否选好，没选好就自动帮玩家选房间,然后2准备环节
             for i, Val in pairs(GameRules.CubeGame.PlayerList) do
                 if not Val.IsEmpty then
+                    local teamid = GameRules.CubeGame.Playerid2Teamid[i]
                     if Val.RoomType == nil then
-                        RoomMgr.SetEmptyRoomPos(i, nil)
+                        RoomMgr.SetEmptyRoomPos(teamid, nil)
                     else
-                        RoomMgr.SetEmptyRoomPos(i, Val.RoomType)
+                        RoomMgr.SetEmptyRoomPos(teamid, Val.RoomType)
                     end
-                    Val.RoomType = RoomMgr.GetRoomTypeByPlayerId(i)
-                    print("playerid:", i, ",roomtype:", Val.RoomType)
+                    Val.RoomType = RoomMgr.GetRoomTypeByPlayerId(teamid)
+                    print("playerid:", i, "teamid:", teamid, ",roomtype:", Val.RoomType)
                 end
             -- print(' Val.RoomType', Val.RoomType)
             end
@@ -337,19 +337,18 @@ function Prepare()
                 -- print('create info', HeroNamePrefix .. heros[i].Name, pos + heros[i].Vec)
                 -- print('create', herounit)
                 -- table.print(herounit)
-                herounit:SetControllableByPlayer(playerId, true)
+                -- herounit:SetControllableByPlayer(playerId, true)
                 herounit:SetHealth(herounit:GetMaxHealth())
                 herounit:SetMana(herounit:GetMaxMana())
                 herounit:SetForwardVector(targetpos)
                 herounit:SetTeam(teamid)
-                print('Prepare', herounit)
             end
         end
     end
     -- 生成pve怪
-    for _, playerInfo in pairs(GameRules.CubeGame.PlayerList) do
+    for playerId, playerInfo in pairs(GameRules.CubeGame.PlayerList) do
         if not playerInfo.IsEmpty then
-            RoomMgr.LoadEnemyInSingleRoom(GameRules.CubeGame.RoundNo, playerInfo.TeamId)
+            RoomMgr.LoadEnemyInSingleRoom(GameRules.CubeGame.RoundNo, playerId)
         end
     end
     
@@ -371,7 +370,6 @@ function Battle()
         BattleTime,
         function()
         --    战斗时间结束，来检查胜负，发放奖励，清理战场
-        
         end
 )
 end

@@ -80,7 +80,7 @@ function m.SetEmptyRoomPos(id, t)
     end
 end
 
-function m.GetRoomTypeByPlayerId(id)
+function m.GetRoomTypeByTeamId(id)
     for i = 1, MAX_ROOM_NUM do
         if Room[i].AID == id or Room[i].BID == id then
             return Room[i].Type
@@ -88,7 +88,7 @@ function m.GetRoomTypeByPlayerId(id)
     end
 end
 
-function m.GetSelfPosByPlayerId(id)
+function m.GetSelfPosByTeamId(id)
     for i = 1, MAX_ROOM_NUM do
         if Room[i].AID == id then
             return Room[i].APos
