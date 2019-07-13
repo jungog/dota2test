@@ -27,7 +27,7 @@ function m.SpawnEnemyByPos(round, teamid, pos, forwardpos)
                 DOTA_TEAM_NEUTRALS
         )
         table.insert(EnemyList[teamid], enemy)
-        enemy.SetForwardVector(forwardpos)
+        enemy:SetForwardVector(forwardpos)
     end
     return EnemyList[teamid]
 end

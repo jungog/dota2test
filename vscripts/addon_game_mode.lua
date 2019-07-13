@@ -98,6 +98,8 @@ function CubeGame:InitGameMode()
     GameRules:GetGameModeEntity():SetPauseEnabled(false)
     GameRules:GetGameModeEntity():SetFogOfWarDisabled(true)
     GameRules:GetGameModeEntity():SetBuybackEnabled(false)
+    -- 不使用默认英雄复活规则
+    GameRules:SetHeroRespawnEnabled(false)
     
     GameRules:SetStrategyTime(0)
     --设置英雄选择后的决策时间
@@ -140,6 +142,7 @@ function CubeGame:InitGameMode()
             playerInfo.IsEmpty = true
             playerInfo.IsOnline = false
             playerInfo.RoomType = ''
+            playerInfo.RoomId = -1
             
             playerInfo.Heros = {
                 [1] = {Vec = Vector(80, 0, 0), Name = '', unit = {}},
@@ -284,6 +287,7 @@ function SelectRoom()
     for _, Val in pairs(GameRules.CubeGame.PlayerList) do
         if not Val.IsEmpty then
             Val.RoomType = nil
+            Val.RoomId = -1
         end
     end
     -- 游戏参数变更
@@ -304,7 +308,7 @@ function SelectRoom()
                     else
                         RoomMgr.SetEmptyRoomPosByPlayerId(i, Val.RoomType)
                     end
-                    Val.RoomType = RoomMgr.GetRoomTypeByPlayerId(teamid)
+                    Val.RoomType, Val.RoomId = RoomMgr.GetRoomTypeIdByPlayerId(i)
                     print("playerid:", i, "teamid:", teamid, ",roomtype:", Val.RoomType)
                 end
             -- print(' Val.RoomType', Val.RoomType)
@@ -327,7 +331,7 @@ function Prepare()
             local teamid = playerInfo.TeamId
             -- 挪动玩家
             local hero = GameRules.CubeGame.Playerid2Hero[playerId]
-            hero:MoveToPosition(pos)
+            FindClearSpaceForUnit(hero, pos, true)
             -- 挪动玩家的英雄
             for i = 1, 3 do
                 -- table.print(heros[i])
@@ -349,13 +353,14 @@ function Prepare()
                 herounit:SetForwardVector(targetpos)
                 herounit:SetTeam(teamid)
                 heros[i].unit = herounit
+                RoomMgr.SetRoomHeros(playerInfo.RoomId,playerId,herounit)
             end
         end
     end
     -- 生成pve怪
     for playerId, playerInfo in pairs(GameRules.CubeGame.PlayerList) do
         if not playerInfo.IsEmpty then
-            RoomMgr.LoadEnemyInSingleRoom(GameRules.CubeGame.RoundNo, playerId)
+            RoomMgr.LoadEnemyInSingleRoom(GameRules.CubeGame.RoundNo)
         end
     end
     

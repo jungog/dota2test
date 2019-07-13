@@ -88,15 +88,15 @@ function m.SetEmptyRoomPosByPlayerId(id, t)
     end
 end
 
-function m.GetRoomTypeByTeamId(id)
+function m.GetRoomTypeIdByPlayerId(id)
     for i = 1, MAX_ROOM_NUM do
         if Room[i].APlayerID == id or Room[i].BPlayerID == id then
-            return Room[i].Type
+            return Room[i].Type, i
         end
     end
 end
 
-function m.GetSelfPosByTeamId(id)
+function m.GetSelfPosByPlayerId(id)
     for i = 1, MAX_ROOM_NUM do
         if Room[i].APlayerID == id then
             return Room[i].APos
@@ -118,27 +118,55 @@ function m.GetEnemyPosByPlayerId(id)
     end
 end
 
-function m.LoadEnemyInSingleRoom(round, teamid)
+-- function m.LoadEnemyInSingleRoom(round, playerid)
+--     for i = 1, MAX_ROOM_NUM do
+--         if Room[i].IsFull == false then
+--             if Room[i].APlayerID == playerid then
+--                 Room[i].BHeros = Enemy.SpawnEnemyByPos(round, Room[i].ATeamID, Room[i].BPos, Room[i].APos)
+--             elseif Room[i].BPlayerID == playerid then
+--                 Room[i].AHeros = Enemy.SpawnEnemyByPos(round, Room[i].BTeamID, Room[i].APos, Room[i].BPos)
+--             end
+--             Room[i].IsFull = true
+--         end
+--     end
+-- end
+function m.LoadEnemyInSingleRoom(round)
     for i = 1, MAX_ROOM_NUM do
         if Room[i].IsFull == false then
-            if Room[i].ATeamID == teamid then
-                Room[i].BHeros = Enemy.SpawnEnemyByPos(round, teamid, Room[i].BPos, Room[i].APos)
-            elseif Room[i].BTeamID == teamid then
-                Room[i].AHeros = Enemy.SpawnEnemyByPos(round, teamid, Room[i].APos, Room[i].BPos)
+            if Room[i].APlayerID ~= -1 then
+                Room[i].BHeros = Enemy.SpawnEnemyByPos(round, Room[i].ATeamID, Room[i].BPos, Room[i].APos)
+                print("room:", i, "Bheros:")
+                table.print(Room[i].BHeros)
+            elseif Room[i].BPlayerID ~= -1 then
+                Room[i].AHeros = Enemy.SpawnEnemyByPos(round, Room[i].BTeamID, Room[i].APos, Room[i].BPos)
+                print("room:", i, "Aheros:")
+                table.print(Room[i].AHeros)
             end
             Room[i].IsFull = true
         end
     end
 end
 
+function m.SetRoomHeros(roomId, playerId, hero)
+    if Room[roomId].APlayerID == playerId then
+        table.insert(Room[roomId].AHeros, hero)
+    elseif Room[roomId].BPlayerID == playerId then
+        table.insert(Room[roomId].BHeros, hero)
+    end
+end
+
 function m.MoveAllHeros()
     for i = 1, MAX_ROOM_NUM do
         if Room[i].IsFull == true then
+            print("roomid", i, "Aheros")
+            table.print(Room[i].AHeros)
+            print("Bheros")
+            table.print(Room[i].BHeros)
             for j = 1, #Room[i].AHeros do
-                Room[i].AHeros[j]:MoveToTargetToAttack(Room[i].BPos);
+                Room[i].AHeros[j]:MoveToPositionAggressive(Room[i].BPos);
             end
             for j = 1, #Room[i].BHeros do
-                Room[i].BHeros[j]:MoveToTargetToAttack(Room[i].APos);
+                Room[i].BHeros[j]:MoveToPositionAggressive(Room[i].APos);
             end
         end
     end
@@ -150,13 +178,13 @@ function m.SetRoomId(room, id)
     if room.APlayerID == -1 then
         room.APlayerID = id
         room.ATeamID = GameRules.CubeGame.Playerid2Teamid[id]
-        print('playerid:', id,"in a")
+        print('playerid:', id, "in a")
         return room.APos
     else
         room.BPlayerID = id
         room.BTeamID = GameRules.CubeGame.Playerid2Teamid[id]
         room.IsFull = true
-        print('playerid:', id,"in b")
+        print('playerid:', id, "in b")
         return room.BPos
     end
 end
