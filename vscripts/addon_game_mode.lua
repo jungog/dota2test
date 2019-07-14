@@ -98,19 +98,25 @@ function CubeGame:InitGameMode()
     GameRules:GetGameModeEntity():SetPauseEnabled(false)
     GameRules:GetGameModeEntity():SetFogOfWarDisabled(true)
     GameRules:GetGameModeEntity():SetBuybackEnabled(false)
+    
     -- 不使用默认英雄复活规则
     GameRules:SetHeroRespawnEnabled(false)
-    
-    GameRules:SetStrategyTime(0)
     --设置英雄选择后的决策时间
-    GameRules:SetShowcaseTime(0)
+    GameRules:SetStrategyTime(0)
     --设置 天辉vs夜魇 界面的显示时间。
-    GameRules:SetSameHeroSelectionEnabled(true)
+    GameRules:SetShowcaseTime(0)
     --允许选择重复英雄
+    GameRules:SetSameHeroSelectionEnabled(true)
+    --设置选择英雄与开始游戏之间的时间，给玩家选择固定的自动英雄
     GameRules:SetPreGameTime(60)
-    --设置选择英雄与开始游戏之间的时间，给玩家选择固定的自动英雄todo
+    --自动为玩家选择艾欧
     GameRules:GetGameModeEntity():SetCustomGameForceHero('npc_dota_hero_wisp')
-    --自动为玩家选择艾欧todo
+
+    -- 玩家最大等级
+    GameRules:GetGameModeEntity():SetCustomHeroMaxLevel(MaxHeroLevel)
+    GameRules:GetGameModeEntity():SetUseCustomHeroLevels(true)
+    -- 英雄经验值表
+    GameRules:GetGameModeEntity():SetCustomXPRequiredToReachNextLevel(XpPerLevelTable)
     ListenToGameEvent('player_connect_full', Dynamic_Wrap(CubeGame, 'OnConnectFull'), self)
     ListenToGameEvent('player_disconnect', Dynamic_Wrap(CubeGame, 'OnDisconnect'), self)
     ListenToGameEvent('game_rules_state_change', Dynamic_Wrap(CubeGame, 'OnGameRulesStateChange'), self)
