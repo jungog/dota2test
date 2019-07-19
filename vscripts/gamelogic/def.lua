@@ -27,3 +27,8 @@ AllTeamIdx = {DOTA_TEAM_CUSTOM_1, DOTA_TEAM_CUSTOM_2, DOTA_TEAM_CUSTOM_3, DOTA_T
     DOTA_TEAM_CUSTOM_5, DOTA_TEAM_CUSTOM_6}
 
 ExtraXP = 0
+
+MaxHeroLevel = 10
+XpPerLevelTable = {
+    5, 10, 20, 30, 50, 70, 110, 150, 230, 310
+}
