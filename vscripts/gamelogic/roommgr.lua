@@ -118,18 +118,6 @@ function m.GetEnemyPosByPlayerId(id)
     end
 end
 
--- function m.LoadEnemyInSingleRoom(round, playerid)
---     for i = 1, MAX_ROOM_NUM do
---         if Room[i].IsFull == false then
---             if Room[i].APlayerID == playerid then
---                 Room[i].BHeros = Enemy.SpawnEnemyByPos(round, Room[i].ATeamID, Room[i].BPos, Room[i].APos)
---             elseif Room[i].BPlayerID == playerid then
---                 Room[i].AHeros = Enemy.SpawnEnemyByPos(round, Room[i].BTeamID, Room[i].APos, Room[i].BPos)
---             end
---             Room[i].IsFull = true
---         end
---     end
--- end
 function m.LoadEnemyInSingleRoom(round)
     for i = 1, MAX_ROOM_NUM do
         if Room[i].IsFull == false then
@@ -172,6 +160,19 @@ function m.MoveAllHeros()
     end
 
 end
+
+function m.ChangeBloodByEnemyNum()
+    for i = 1, MAX_ROOM_NUM do
+        if Room[i].IsFull == true then
+            
+            
+            
+            
+            end
+    end
+
+end
+
 
 --内部函数--
 function m.SetRoomId(room, id)

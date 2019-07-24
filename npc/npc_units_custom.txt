@@ -112,7 +112,7 @@
 		"Model"	"models/creeps/lane_creeps/creep_radiant_melee/radiant_melee.vmdl"
 		"ModelScale"	"0.85"
 		"Level"	"1"
-		"BountyXP"	"0"
+		"BountyXP"	"1"
 		"BountyGoldMin"	"0"
 		"BountyGoldMax"	"0"
 		"StatusHealth"	"150"

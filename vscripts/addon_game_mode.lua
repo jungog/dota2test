@@ -360,6 +360,7 @@ function Prepare()
                 -- table.print(herounit)
                 -- herounit:SetControllableByPlayer(playerId, true)
                 herounit:SetHealth(herounit:GetMaxHealth())
+                hero:SetDeathXP(1 + ExtraXP)
                 herounit:SetMana(herounit:GetMaxMana())
                 herounit:SetForwardVector(targetpos)
                 herounit:SetTeam(teamid)
@@ -394,7 +395,11 @@ function Battle()
     Timers:CreateTimer(
         BattleTime,
         function()
-        --    战斗时间结束，来检查胜负，发放奖励，清理战场
+            -- 按照剩余英雄扣血
+            RoomMgr.ChangeBloodByEnemyNum()
+        -- 发奖励
+        -- 清理战场
+        -- 休整环节，给玩家调整技能等
         end
 )
 end
