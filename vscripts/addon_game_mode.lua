@@ -111,9 +111,10 @@ function CubeGame:InitGameMode()
     GameRules:SetPreGameTime(60)
     --自动为玩家选择艾欧
     GameRules:GetGameModeEntity():SetCustomGameForceHero('npc_dota_hero_wisp')
-
+    
     -- 玩家最大等级
     GameRules:GetGameModeEntity():SetCustomHeroMaxLevel(MaxHeroLevel)
+    -- 开关自定义英雄英雄经验表
     GameRules:GetGameModeEntity():SetUseCustomHeroLevels(true)
     -- 英雄经验值表
     GameRules:GetGameModeEntity():SetCustomXPRequiredToReachNextLevel(XpPerLevelTable)
@@ -211,50 +212,54 @@ function CubeGame:OnPlayerPickHero(keys)
     if (player == nil) then
         return
     end
-    
-    local playerId = player:GetPlayerID()
     local hero = EntIndexToHScript(keys.heroindex)
-    
-    hero:SetForwardVector(Vector(0, 1, 0))
-    hero:SetDeathXP(0)
-    hero:SetHullRadius(1)
-    hero:SetAbilityPoints(0)
-    for i = 1, 16 do
-        hero:RemoveAbility('empty' .. i)
-    end
-    hero:SetMana(0)
-    
-    GameRules.CubeGame.Playerid2Teamid[player:GetPlayerID()] = hero:GetTeam()
-    GameRules.CubeGame.Teamid2Playerid[hero:GetTeam()] = player:GetPlayerID()
-    GameRules.CubeGame.Playerid2Hero[player:GetPlayerID()] = hero
-    
-    GameRules.CubeGame.PlayerList[playerId].TeamId = hero:GetTeam()
-    
-    local playercount = 0
-    for _, _ in pairs(GameRules.CubeGame.Teamid2Playerid) do
-        playercount = playercount + 1
-    end
-    
-    print('PlayerCount: ' .. playercount .. '/' .. PlayerResource:GetPlayerCount())
-    
-    if playercount == PlayerResource:GetPlayerCount() then
-        Timers:CreateTimer(
-            0.1,
-            function()
-                InitHeros()
-            end
-    )
-    -- Timers:CreateTimer(20, function()
-    --     for i = 6, 11 do
-    --         print("1", Enemy.IsEmenyALive(i));
-    --     end
-    --     Enemy.ClearAllEmeny();
-    --     Timers:CreateTimer(10, function()
-    --         for i = 6, 11 do
-    --             print("2", Enemy.IsEmenyALive(i));
-    --         end
-    --     end)
-    -- end)
+    if hero:GetName() == "npc_dota_hero_wisp" then
+        hero:SetAbilityPoints(0)
+        
+        local playerId = player:GetPlayerID()
+        
+        hero:SetForwardVector(Vector(0, 1, 0))
+        hero:SetDeathXP(0)
+        hero:SetHullRadius(1)
+        hero:SetAbilityPoints(0)
+        AddAbilityAndSetLevel(hero, 'not_joining')
+        for i = 1, 16 do
+            hero:RemoveAbility('empty' .. i)
+        end
+        hero:SetMana(0)
+        
+        GameRules.CubeGame.Playerid2Teamid[player:GetPlayerID()] = hero:GetTeam()
+        GameRules.CubeGame.Teamid2Playerid[hero:GetTeam()] = player:GetPlayerID()
+        GameRules.CubeGame.Playerid2Hero[player:GetPlayerID()] = hero
+        
+        GameRules.CubeGame.PlayerList[playerId].TeamId = hero:GetTeam()
+        
+        local playercount = 0
+        for _, _ in pairs(GameRules.CubeGame.Teamid2Playerid) do
+            playercount = playercount + 1
+        end
+        
+        print('PlayerCount: ' .. playercount .. '/' .. PlayerResource:GetPlayerCount())
+        
+        if playercount == PlayerResource:GetPlayerCount() then
+            Timers:CreateTimer(
+                0.1,
+                function()
+                    InitHeros()
+                end
+        )
+        -- Timers:CreateTimer(20, function()
+        --     for i = 6, 11 do
+        --         print("1", Enemy.IsEmenyALive(i));
+        --     end
+        --     Enemy.ClearAllEmeny();
+        --     Timers:CreateTimer(10, function()
+        --         for i = 6, 11 do
+        --             print("2", Enemy.IsEmenyALive(i));
+        --         end
+        --     end)
+        -- end)
+        end
     end
 end
 
@@ -358,8 +363,9 @@ function Prepare()
                 herounit:SetMana(herounit:GetMaxMana())
                 herounit:SetForwardVector(targetpos)
                 herounit:SetTeam(teamid)
+                herounit:SetDeathXP(1)
                 heros[i].unit = herounit
-                RoomMgr.SetRoomHeros(playerInfo.RoomId,playerId,herounit)
+                RoomMgr.SetRoomHeros(playerInfo.RoomId, playerId, herounit)
             end
         end
     end
@@ -391,4 +397,30 @@ function Battle()
         --    战斗时间结束，来检查胜负，发放奖励，清理战场
         end
 )
+end
+
+
+
+
+
+
+
+
+-- 一些方法，之后挪到其他文件统一管理吧todo
+--通用方法之添加技能
+function AddAbilityAndSetLevel(u,a,l)
+	if l == nil then
+		l = 1
+	end
+	if u == nil or u:IsNull() == true then
+		return
+	end
+	if u:FindAbilityByName(a) == nil then
+		u:AddAbility(a)
+		if u:FindAbilityByName(a) ~= nil then
+			u:FindAbilityByName(a):SetLevel(l)
+		end
+	else
+		u:FindAbilityByName(a):SetLevel(l)
+	end
 end
